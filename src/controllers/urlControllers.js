@@ -26,7 +26,7 @@ export async function shortenUrl(req, res) {
 
 export async function getUrl(req, res) {
     const id = req.params.id;
-    const {rows: urlList} = await connection.query(`SELECT * FROM urls WHERE id=${id}`)
+    const {rows: urlList} = await connection.query(`SELECT * FROM urls WHERE id=$1`, [id])
 
     if (urlList.length === 0) {
         return res.sendStatus(404)
@@ -44,7 +44,7 @@ export async function getUrl(req, res) {
 export async function redirectUser(req, res) {
 
     const shortUrl = req.params.shortUrl;
-    const {rows: verifyUrl} =  await connection.query(`SELECT * FROM urls WHERE "shortenUrl"='${shortUrl}'`)
+    const {rows: verifyUrl} =  await connection.query(`SELECT * FROM urls WHERE "shortenUrl"=$1`, [shortUrl])
     
     if (verifyUrl.length === 0) {
         return res.sendStatus(404)
@@ -52,7 +52,27 @@ export async function redirectUser(req, res) {
 
     const url = verifyUrl[0].url
 
-    await connection.query(`UPDATE urls SET visited = visited + 1 WHERE "shortenUrl"='${shortUrl}'`)
+    await connection.query(`UPDATE urls SET visited = visited + 1 WHERE "shortenUrl"=$1`, [shortUrl])
     
     res.redirect(`${url}`)
+}
+
+export async function deleteUrl(req, res) {
+    const id = req.params.id;
+    const user = res.locals.user;
+
+    const {rows: verifyUrl} = await connection.query(`SELECT * FROM urls WHERE id=$1`, [id])
+
+    if (verifyUrl.length === 0) {
+        return res.sendStatus(404)
+    }
+
+    const {rows: verifyUserId} = await connection.query(`SELECT * FROM urls WHERE id=$1 and "userId"=$2`, [id, user.id])
+
+    if (verifyUserId.length === 0) {
+        return res.sendStatus(401)
+    }
+
+    await connection.query(`DELETE FROM urls WHERE id=$1`, [id])
+    res.sendStatus(204)
 }

@@ -37,9 +37,7 @@ export async function loginUser(req, res) {
     }
 
     const { email, password } = authUser;
-    console.log(email)
     const { rows: user } = await connection.query(`SELECT * FROM users WHERE email='${email}'`)
-    console.log(user)
     
         if(user.length > 0 && bcrypt.compareSync(password, user[0].password)) {
             const token = uuid();   
