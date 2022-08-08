@@ -40,3 +40,19 @@ export async function getUrl(req, res) {
     
         return res.status(200).send(object)
 }
+
+export async function redirectUser(req, res) {
+
+    const shortUrl = req.params.shortUrl;
+    const {rows: verifyUrl} =  await connection.query(`SELECT * FROM urls WHERE "shortenUrl"='${shortUrl}'`)
+    
+    if (verifyUrl.length === 0) {
+        return res.sendStatus(404)
+    }
+
+    const url = verifyUrl[0].url
+
+    await connection.query(`UPDATE urls SET visited = visited + 1 WHERE "shortenUrl"='${shortUrl}'`)
+    
+    res.redirect(`${url}`)
+}
