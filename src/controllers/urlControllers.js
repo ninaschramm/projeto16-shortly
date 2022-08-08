@@ -23,3 +23,20 @@ export async function shortenUrl(req, res) {
 
     res.status(201).send(object)
 }
+
+export async function getUrl(req, res) {
+    const id = req.params.id;
+    const {rows: urlList} = await connection.query(`SELECT * FROM urls WHERE id=${id}`)
+
+    if (urlList.length === 0) {
+        return res.sendStatus(404)
+    }
+
+    const object = {        
+            "id": urlList[0].id,
+            "shortUrl": urlList[0].shortenUrl,
+            "url": urlList[0].url
+        }
+    
+        return res.status(200).send(object)
+}
