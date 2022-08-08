@@ -2,6 +2,7 @@ import express, {json} from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import authRouter from './routes/authRoutes.js';
+import urlRouter from './routes/urlRoutes.js';
 
 const server = express();
 
@@ -23,7 +24,7 @@ server.use(function (req, res, next) {
 
 
 
-server.use(authRouter);
+server.use(authRouter, urlRouter);
 
 const PORT = process.env.PORT || 5000
 
