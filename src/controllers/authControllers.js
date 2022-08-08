@@ -8,8 +8,7 @@ export async function createUser(req, res) {
 
     const validation = newUserSchema.validate(newUser);
 
-    if (validation.error) {
-        console.log(validation.error.details)        
+    if (validation.error) {      
     return res.status(422).send(`${validation.error}`)  
     }
 
@@ -31,8 +30,7 @@ export async function loginUser(req, res) {
     
     const validation = authUserSchema.validate(authUser);
 
-    if (validation.error) {
-        console.log(validation.error.details)        
+    if (validation.error) {      
     return res.status(422).send(`${validation.error}`)  
     }
 

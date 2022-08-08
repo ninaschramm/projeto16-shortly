@@ -17,3 +17,21 @@ export async function getMyUrls(req, res) {
 
     res.status(200).send(object)
 }
+
+export async function getRanking(req, res) {
+    const {rows: ranking} = await connection.query(`SELECT users.id as id, users.name as name, COUNT(urls."userId") as "linksCount", SUM(urls.visited) as "visitCount"
+    FROM users
+    LEFT JOIN urls
+    ON urls."userId" = users.id
+    GROUP BY users.id
+    ORDER BY "visitCount" DESC NULLS LAST
+    LIMIT 10`)
+
+    for (let i of ranking) {
+        if (i.visitCount === null) {
+            i.visitCount = '0'
+        }
+    }
+
+    res.status(200).send(ranking)
+}

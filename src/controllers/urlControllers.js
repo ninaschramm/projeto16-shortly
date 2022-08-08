@@ -9,8 +9,7 @@ export async function shortenUrl(req, res) {
 
     const validation = newUrlSchema.validate(req.body);
 
-    if (validation.error) {
-        console.log(validation.error.details)        
+    if (validation.error) {       
     return res.status(422).send(`${validation.error}`)  
     }
 
